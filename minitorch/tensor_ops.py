@@ -16,6 +16,8 @@ if TYPE_CHECKING:
     from .tensor import Tensor
     from .tensor_data import Shape, Storage, Strides
 
+import numpy as np
+
 
 class MapProto(Protocol):
     def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
@@ -277,11 +279,11 @@ def tensor_map(
         out_size = operators.prod(out_shape)
         for out_pos in range(out_size):
             # get in_index and out_index
-            out_index = [0] * len(out_shape)
+            out_index = np.array([0] * len(out_shape), dtype=np.int32)
             to_index(out_pos, out_shape, out_index)
 
             # get in_index and in_pos
-            in_index = [0] * len(in_shape)
+            in_index = np.array([0] * len(in_shape), dtype=np.int32)
             broadcast_index(
                 big_index=out_index,
                 big_shape=out_shape,
