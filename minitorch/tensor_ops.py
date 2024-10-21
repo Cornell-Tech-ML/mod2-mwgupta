@@ -276,7 +276,7 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        out_size = operators.prod(out_shape)
+        out_size = int(operators.prod(out_shape))
         for out_pos in range(out_size):
             # get in_index and out_index
             out_index = np.array([0] * len(out_shape), dtype=np.int32)
@@ -340,14 +340,14 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        out_size = operators.prod(out_shape)
+        out_size = int(operators.prod(out_shape))
         for out_pos in range(out_size):
             # get out_index
-            out_index = [0] * len(out_shape)
+            out_index = np.array([0] * len(out_shape), dtype=np.int32)
             to_index(out_pos, out_shape, out_index)
 
             # get a_pos and b_pos
-            a_index = [0] * len(a_shape)
+            a_index = np.array([0] * len(a_shape), dtype=np.int32)
             broadcast_index(
                 big_index=out_index,
                 big_shape=out_shape,
@@ -356,7 +356,7 @@ def tensor_zip(
             )
             a_pos = index_to_position(a_index, a_strides)
 
-            b_index = [0] * len(b_shape)
+            b_index = np.array([0] * len(b_shape), dtype=np.int32)
             broadcast_index(
                 big_index=out_index,
                 big_shape=out_shape,
@@ -399,9 +399,9 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        a_size = operators.prod(a_shape)
+        a_size = int(operators.prod(a_shape))
         for a_pos in range(a_size):
-            a_index = [0] * len(a_shape)
+            a_index = np.array([0] * len(a_shape), dtype=np.int32)
             to_index(a_pos, a_shape, a_index)
 
             out_index = a_index[:]
