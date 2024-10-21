@@ -339,7 +339,7 @@ def reduce(fn: Callable[[float, float], float], ls: Iterable[float]) -> float:
         float: fn(...fn(fn(ls[0], ls[1]), ls[2]), ... ls[n])
 
     """
-    if len(ls) == 0:
+    if len(list(ls)) == 0:
         return 0
 
     ls = list(ls)

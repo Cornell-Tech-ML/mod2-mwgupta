@@ -232,9 +232,9 @@ class Sum(Function):
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
         """Sum the tensor."""
         ctx.save_for_backward(a.shape, dim)
-        dim = int(dim.item())
-        if dim != -1:
-            return a.f.add_reduce(a, dim)
+        int_dim = int(dim.item())
+        if int_dim != -1:
+            return a.f.add_reduce(a, int_dim)
         else:
             return a.f.add_reduce(a.contiguous().view(int(operators.prod(a.shape))), 0)
 
@@ -253,9 +253,9 @@ class Permute(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
         """Permute the dimensions of a tensor."""
-        order = [int(order[i]) for i in range(order.size)]
-        ctx.save_for_backward(order)
-        return a._new(a._tensor.permute(*order))
+        int_order = [int(order[i]) for i in range(order.size)]
+        ctx.save_for_backward(int_order)
+        return a._new(a._tensor.permute(*int_order))
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
