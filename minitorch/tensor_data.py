@@ -125,7 +125,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         shape2 = h
 
     # left pad with 1's to match shape2 size
-    shape1 = (1,) * (len(shape2) - len(shape1)) + shape1
+    shape1 = (1,) * (len(shape2) - len(shape1)) + tuple(shape1)
 
     # check for non-broadcastable
     for i in range(len(shape1)):

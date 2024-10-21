@@ -365,16 +365,15 @@ class Tensor:
     def sum(self, dim: Optional[int] = None) -> Tensor:
         """Sum function"""
         if dim is None:
-            return Sum.apply(self)
-        else:
-            return Sum.apply(self, self._ensure_tensor(dim))
+            dim = -1
+        return Sum.apply(self, self._ensure_tensor(dim))
 
     def mean(self, dim: Optional[int] = None) -> Tensor:
         """Mean function"""
         if dim is None:
-            return Sum.apply(self) / self.size
+            return self.sum() / self.size
         else:
-            return Sum.apply(self, self._ensure_tensor(dim)) / self.shape[dim]
+            return self.sum(dim) / self.shape[dim]
 
     def permute(self, *order: int) -> Tensor:
         """Permute function"""

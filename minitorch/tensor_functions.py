@@ -151,7 +151,7 @@ class EQ(Function):
         return t1.f.eq_zip(t1, t2)
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tensor:
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Return gradient for equality."""
         return zeros(grad_output.shape), zeros(grad_output.shape)
 
@@ -163,7 +163,7 @@ class LT(Function):
         return t1.f.lt_zip(t1, t2)
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tensor:
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Return gradient for less than."""
         return zeros(grad_output.shape), zeros(grad_output.shape)
 
@@ -229,28 +229,24 @@ class IsClose(Function):
 
 class Sum(Function):
     @staticmethod
-    def forward(ctx: Context, a: Tensor, dim: Optional[Tensor] = None) -> Tensor:
+    def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
         """Sum the tensor."""
         ctx.save_for_backward(a.shape, dim)
-        if dim is not None:
-            return a.f.add_reduce(a, int(dim.item()))
+        dim = int(dim.item())
+        if dim != -1:
+            return a.f.add_reduce(a, dim)
         else:
             return a.f.add_reduce(a.contiguous().view(int(operators.prod(a.shape))), 0)
 
     @staticmethod
-    def backward(
-        ctx: Context, grad_output: Tensor
-    ) -> Tuple[Tensor, float]:  # fix this because sometimes doens't return float
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
         """Return gradient for sum."""
         (shape, dim) = ctx.saved_values
         new_storage = np.ones(np.prod(shape), dtype=np.float64)
         orig_shape_tensor = minitorch.Tensor.make(
             new_storage, shape, backend=grad_output.backend
         )
-        if dim is None:
-            return orig_shape_tensor.expand(grad_output)
-        else:
-            return orig_shape_tensor.expand(grad_output), 0.0
+        return orig_shape_tensor.expand(grad_output), 0.0
 
 
 class Permute(Function):
