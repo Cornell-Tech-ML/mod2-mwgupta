@@ -13,6 +13,26 @@ def RParam(*shape):
 
 # TODO: Implement for Task 2.5.
 
+def Network(hidden_layers):
+    class Network(minitorch.Module):
+        def __init__(self):
+            super().__init__()
+            self.hidden_layers = hidden_layers
+            self.w1 = RParam(2, hidden_layers)
+            self.b1 = RParam(hidden_layers)
+            self.w2 = RParam(hidden_layers, hidden_layers)
+            self.b2 = RParam(hidden_layers)
+            self.w3 = RParam(hidden_layers, 1)
+            self.b3 = RParam(1)
+
+        def forward(self, x):
+            x = minitorch.relu(x @ self.w1 + self.b1)
+            x = minitorch.relu(x @ self.w2 + self.b2)
+            x = minitorch.sigmoid(x @ self.w3 + self.b3)
+            return x
+
+    return Network()
+
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
 
