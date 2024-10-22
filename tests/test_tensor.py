@@ -224,4 +224,9 @@ def test_reduce_forward_all_dims() -> None:
     # shape (1, 1)
     t_summed_all_expected = tensor([27])
 
+    print(f"CHECK SHAPE: {t_summed_all.shape}")
+    print(f"CHECK SHAPE 2: {t_summed_all_expected.shape}")
+    print(t_summed_all)
+    print(t_summed_all[0])
+
     assert_close(t_summed_all[0], t_summed_all_expected[0])
