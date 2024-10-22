@@ -13,25 +13,33 @@ def RParam(*shape):
 
 # TODO: Implement for Task 2.5.
 
-def Network(hidden_layers):
-    class Network(minitorch.Module):
-        def __init__(self):
-            super().__init__()
-            self.hidden_layers = hidden_layers
-            self.w1 = RParam(2, hidden_layers)
-            self.b1 = RParam(hidden_layers)
-            self.w2 = RParam(hidden_layers, hidden_layers)
-            self.b2 = RParam(hidden_layers)
-            self.w3 = RParam(hidden_layers, 1)
-            self.b3 = RParam(1)
+class Network(minitorch.Module):
+    def __init__(self, hidden_layers):
+        super().__init__()
+        self.layer1 = Linear(2, hidden_layers)
+        self.layer2 = Linear(hidden_layers, hidden_layers)
+        self.layer3 = Linear(hidden_layers, 1)
 
-        def forward(self, x):
-            x = minitorch.relu(x @ self.w1 + self.b1)
-            x = minitorch.relu(x @ self.w2 + self.b2)
-            x = minitorch.sigmoid(x @ self.w3 + self.b3)
-            return x
+    def forward(self, x):
+        middle = self.layer1.forward(x).relu()
+        end = self.layer2.forward(middle).relu()
+        return self.layer3.forward(end).sigmoid()
 
-    return Network()
+
+class Linear(minitorch.Module):
+    def __init__(self, in_size, out_size):
+        super().__init__()
+        self.weights = RParam(in_size, out_size)
+        self.bias = RParam(out_size)
+
+    def forward(self, inputs):
+        batch_size, features = inputs.shape
+        inputs = inputs.view(batch_size, features, 1)
+        output = inputs * self.weights.value
+        output = output.sum(dim=1)
+        output = output + self.bias.value
+        output = output.view(batch_size, output.shape[-1])
+        return output
 
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)

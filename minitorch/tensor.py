@@ -325,8 +325,7 @@ class Tensor:
     def __gt__(self, b: TensorLike) -> Tensor:
         return LT.apply(self._ensure_tensor(b), self)
 
-    def neg(self) -> Tensor:
-        """Negate the tensor"""
+    def __neg__(self) -> Tensor:
         return Neg.apply(self)
 
     def __radd__(self, b: TensorLike) -> Tensor:
